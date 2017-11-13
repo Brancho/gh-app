@@ -1,13 +1,13 @@
 import React from 'react';
-import {Text, View, FlatList, Image, TouchableHighlight} from 'react-native';
+import {FlatList} from 'react-native';
 import gql from 'graphql-tag'
 import {graphql} from 'react-apollo'
 import {Actions} from 'react-native-router-flux'
-
+import {List, ListItem} from "react-native-elements";
 
 const userQuery = gql`
-  query($query: String!) {
-    search(query: $query, type: USER, first: 20){
+  query($query: String!, $cursor: String) {
+    search(query: $query, type: USER, first: 20, after: $cursor){
       edges {
         node {
           ... on User {
@@ -18,62 +18,65 @@ const userQuery = gql`
             email
             avatarUrl
             websiteUrl
-            isHireable
           }
         }
+        cursor
       }
     }
   }
 `;
 
+//fullname:Branka, language:Javascript, location:Belgrade, followers:<10
 
-class List extends React.Component {
+class UserList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: null
+      next: null
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.data.search) {
-      this.setState({users: nextProps.data.search.edges})
+      let usersArray = nextProps.data.search.edges;
+      this.setState({next: usersArray[usersArray.length - 1].cursor});
     }
   }
 
-  renderSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: "86%",
-          backgroundColor: "#CED0CE",
-          marginLeft: "14%"
-        }}
-      />
-    );
-  };
+  fetchUsers() {
+    this.props.data.fetchMore({
+      variables: {cursor: this.state.next},
+      updateQuery: (previousResult, {fetchMoreResult}) => {
+        return {search: {edges: [...previousResult.search.edges, ...fetchMoreResult.search.edges]}};
+      },
+    });
+  }
 
   render() {
-    const {users} = this.state;
+    const users = this.props.data.search ? this.props.data.search.edges : null;
+
     return (
-      <View>
+      <List containerStyle={{marginTop: 0}}>
         {users &&
         <FlatList
           data={users}
           keyExtractor={(item, index) => index}
-          ItemSeparatorComponent={this.renderSeparator}
           renderItem={({item}) => (
-            <TouchableHighlight onPress={() => Actions.user(item)}>
-              <View>
-                <Image source={{uri: item.node.avatarUrl}} style={{width: 80, height: 80}}/>
-                <Text>{item.node.name}</Text>
-              </View>
-            </TouchableHighlight>
+            <ListItem
+              roundAvatar
+              title={item.node.name}
+              subtitle={item.node.location}
+              avatar={{uri: item.node.avatarUrl}}
+              onPress={() => Actions.user(item)}
+            />
           )}
+          onEndReachedThreshold={0.5}
+          onEndReached={({distanceFromEnd}) => {
+            this.fetchUsers()
+          }}
         />
         }
-      </View>
+      </List>
     );
   }
 }
@@ -83,7 +86,8 @@ export default graphql(userQuery, {
     return {
       variables: {
         query: `language:${ownProps.language}`,
+        cursor: null
       },
     };
   },
-})(List);
+})(UserList);

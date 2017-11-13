@@ -1,23 +1,29 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
-
+import {View, Text, Image, Dimensions} from 'react-native';
+import {Card} from 'react-native-elements'
 
 class User extends React.Component {
-  render(){
-    console.log(this.props.node);
-    const { name, bio, location, avatarUrl, company, isHireable, email, websiteUrl } = this.props.node;
+  render() {
 
-    return(
-      <View>
-        <Image source={{uri: avatarUrl}} style={{width: 200, height: 200}}/>
-        <Text>{name}</Text>
-        <Text>{bio}</Text>
-        <Text>{location}</Text>
-        <Text>{company}</Text>
-        <Text>{email}</Text>
-        <Text>{websiteUrl}</Text>
-        <Text>{isHireable ? "Available for new opportunities." : "Not available for hiring."}</Text>
-      </View>
+    let {width} = Dimensions.get('window');
+    const {name, bio, location, avatarUrl, company, email, websiteUrl} = this.props.node;
+
+    return (
+      <Card>
+        <View style={{justifyContent: 'center'}}>
+          <View style={{borderBottomColor: 'black', borderBottomWidth: 1, marginBottom: 10}}>
+            <Image source={{uri: avatarUrl}} style={{width: width * .83, height: width * .83}} resizeMode="cover"/>
+            <Text style={{fontSize: 25, fontWeight: 'bold', paddingBottom: 10, paddingTop: 10}}>{name}</Text>
+          </View>
+          <Text style={{fontStyle: 'italic', marginBottom: 10}}>{bio}</Text>
+          <Text>Location: {location}</Text>
+          <Text>Company: {company}</Text>
+          <View style={{marginTop: 10}}>
+            <Text>{email}</Text>
+            <Text>{websiteUrl}</Text>
+          </View>
+        </View>
+      </Card>
     );
   }
 }

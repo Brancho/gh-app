@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, TextInput, Button } from 'react-native';
-import List from './List';
+import { View } from 'react-native';
+import UserList from './List';
+import { SearchBar, Button } from 'react-native-elements'
 
 
 class Main extends React.Component {
@@ -10,15 +11,18 @@ class Main extends React.Component {
       language: 'Javascript'
     };
   }
+
   render(){
     return(
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <TextInput
-          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-          onChangeText={(language) => this.setState({language})}
-          value={this.state.language}
+      <View style={{ flex: 1 }}>
+        <SearchBar
+          ref={search => this.search = search}
+          placeholder="Search users by language"
         />
-        <List language={this.state.language}/>
+        <Button
+          onPress={() => this.search.input._lastNativeText ? this.setState({ language: this.search.input._lastNativeText}) : null}
+          title='SEARCH' />
+        <UserList language={this.state.language}/>
       </View>
     );
   }
