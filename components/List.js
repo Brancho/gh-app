@@ -44,8 +44,15 @@ class UserList extends React.Component {
   }
 
   fetchUsers() {
+    // let { fullname, location, followers } = this.props;
+    // let queryVariables = {};
+    //
+    //
     this.props.data.fetchMore({
-      variables: {cursor: this.state.next},
+      variables: {
+        cursor: this.state.next
+
+      },
       updateQuery: (previousResult, {fetchMoreResult}) => {
         return {search: {edges: [...previousResult.search.edges, ...fetchMoreResult.search.edges]}};
       },
