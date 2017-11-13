@@ -1,8 +1,8 @@
 import React from 'react';
-import {Text, View, FlatList, Image} from 'react-native';
+import {Text, View, FlatList, Image, TouchableHighlight} from 'react-native';
 import gql from 'graphql-tag'
 import {graphql} from 'react-apollo'
-
+import {Actions} from 'react-native-router-flux'
 
 
 const userQuery = gql`
@@ -28,33 +28,48 @@ const userQuery = gql`
 
 
 class List extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       users: null
     };
   }
 
-  componentWillReceiveProps(nextProps){
-    if(nextProps.data.search){
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data.search) {
       this.setState({users: nextProps.data.search.edges})
     }
   }
 
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: "86%",
+          backgroundColor: "#CED0CE",
+          marginLeft: "14%"
+        }}
+      />
+    );
+  };
+
   render() {
-    const { users } = this.state;
+    const {users} = this.state;
     return (
       <View>
         {users &&
         <FlatList
           data={users}
           keyExtractor={(item, index) => index}
+          ItemSeparatorComponent={this.renderSeparator}
           renderItem={({item}) => (
-            <View>
-              <Image source={{uri: item.node.avatarUrl}} style={{width: 70, height: 70}}/>
-              <Text>{item.node.name}</Text>
-              <Text>{item.node.bio}</Text>
-            </View>
+            <TouchableHighlight onPress={() => Actions.user(item)}>
+              <View>
+                <Image source={{uri: item.node.avatarUrl}} style={{width: 80, height: 80}}/>
+                <Text>{item.node.name}</Text>
+              </View>
+            </TouchableHighlight>
           )}
         />
         }

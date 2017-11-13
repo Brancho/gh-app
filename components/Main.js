@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, Button } from 'react-native';
 import List from './List';
+
 
 class Main extends React.Component {
   constructor(props){
@@ -11,9 +12,9 @@ class Main extends React.Component {
   }
   render(){
     return(
-      <View style={{ padding: 10, paddingTop: 30 }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <TextInput
-          style={{height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20}}
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
           onChangeText={(language) => this.setState({language})}
           value={this.state.language}
         />
