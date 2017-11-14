@@ -26,8 +26,6 @@ const userQuery = gql`
   }
 `;
 
-//fullname:Branka, language:Javascript, location:Belgrade, followers:<10
-
 class UserList extends React.Component {
   constructor(props) {
     super(props);
@@ -39,19 +37,14 @@ class UserList extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.data.search) {
       let usersArray = nextProps.data.search.edges;
-      this.setState({next: usersArray[usersArray.length - 1].cursor});
+      this.setState({next: usersArray[usersArray.length - 1] ? usersArray[usersArray.length - 1].cursor : null});
     }
   }
 
   fetchUsers() {
-    // let { fullname, location, followers } = this.props;
-    // let queryVariables = {};
-    //
-    //
     this.props.data.fetchMore({
       variables: {
         cursor: this.state.next
-
       },
       updateQuery: (previousResult, {fetchMoreResult}) => {
         return {search: {edges: [...previousResult.search.edges, ...fetchMoreResult.search.edges]}};
@@ -90,9 +83,13 @@ class UserList extends React.Component {
 
 export default graphql(userQuery, {
   options(ownProps) {
+
+    let {fullname, location, followers, language} = ownProps;
+    let query = `language:${language}${fullname ? `, fullname:${fullname}` : ''}${location ? `, location:${location}` : ''}${followers ? `, followers:${followers}` : ''}`;
+
     return {
       variables: {
-        query: `language:${ownProps.language}`,
+        query,
         cursor: null
       },
     };
