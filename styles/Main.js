@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
   },
   filterTitle: {
     textAlign: 'center',
-    fontWeight: 'bold',
     fontSize: 22,
     marginBottom: 15
   },

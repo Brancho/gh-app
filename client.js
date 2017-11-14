@@ -3,7 +3,14 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloLink } from 'apollo-link';
 import { createHttpLink } from 'apollo-link-http';
 
-const TOKEN = 'Bearer 09f004534619b2de40218da40160b6de8dbf8dbc';
+// PLease supply your Github Token
+// const TOKEN = 'Bearer <Your-GH-Token>';
+const TOKEN = null;
+
+if(!TOKEN){
+  throw 'You must enter Github token. \n Example:\n Bearer <YOUR-GH-TOKEN>';
+}
+
 const httpLink = createHttpLink({ uri: 'https://api.github.com/graphql' });
 const middlewareLink = new ApolloLink((operation, forward) => {
   operation.setContext({

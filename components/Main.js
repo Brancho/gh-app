@@ -32,7 +32,7 @@ class Main extends React.Component {
     let name = this.nameF._lastNativeText;
     let followers = this.followersF._lastNativeText;
     if (language) {
-      this.setState({language, location, name, followers})
+      this.setState({language, location, name, followers, filter: false})
     }
   }
 
